@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import NextImage, { ImageLoaderProps } from 'next/image'
 import { Grid, GridProps } from '@ui/Grid'
 import { Typography } from '@ui/Typography'
 import { Button } from '@ui/Button'
 
 import { Excerpt } from '@components/Excerpt'
+import { Image } from '@components/Image'
 
 type PlantCollectionProps = {
   plants: Plant[]
@@ -50,52 +50,18 @@ export function PlantEntry({ plant, variant = 'square' }: PlantEntryType) {
   )
 }
 
-type ImageProps ={
-  layout: 'responsive' | 'fixed' | 'intrinsic'
-  src: string
-  width: number
-  height?: number
-  aspectRatio: '1:1' | '16:9' | '4:3' 
-  fit: 'fill' | 'pad' | 'cover' | 'none' | 'scale-down' | 'crop' | 'scale'
-}
-
-function Image({layout, src, width, aspectRatio, fit = 'scale'}: ImageProps){
-  const height = calcAspectRatio(aspectRatio, width);
-
-  const loader = (args: ImageLoaderProps): string => {
-    const loaderHeight = calcAspectRatio(aspectRatio, args.width)
-
-    return `${args.src}?w=${args.width}&h=${loaderHeight}&fit=${fit}`
-  }
-  return (
-    <NextImage 
-      layout={layout}
-      alt='plant' 
-      src={src} 
-      width={width} 
-      height={height} 
-      loader={loader}
-    />
-  )
-}
-
-const aspectRatioToRatio = {
-  '1:1': 1,
-  '16:9': 9 / 16,
-  '4:3': 3 / 4,
-}
-
-function calcAspectRatio(aspectRatio: '1:1' | '16:9' | '4:3' , width: number): number {
-  const ratio = aspectRatioToRatio[aspectRatio]
-    return Math.floor(width * ratio)
-}
-
 export function PlantEntrySquare({ image, plantName, slug }: Plant) {
   return (
-    <Link href={`/entry/${slug}`} legacyBehavior>
+    <Link legacyBehavior href={`/entry/${slug}`}>
       <a title={`Go to ${plantName}`}>
         <div className="opacity-95 hover:opacity-100">
-          <Image layout="responsive" src={image.url}  width={460} height={460} aspectRatio="16:9" alt={plantName} fit='scale'/>
+          <Image
+            src={image.url}
+            layout="intrinsic"
+            width={460}
+            aspectRatio="4:3"
+            alt={plantName}
+          />
           <div className="p-4">
             <Typography variant="h4" className="break-words">
               {plantName}
@@ -114,12 +80,20 @@ export function PlantEntryInline({
   className,
 }: Plant & { className?: string }) {
   return (
-    <Link href={`/entry/${slug}`} legacyBehavior>
+    <Link legacyBehavior href={`/entry/${slug}`}>
       <a title={`Go to ${plantName}`}>
         <div
           className={`opacity-95 hover:opacity-100 flex items-end ${className}`}
         >
-          <img src={image.url} width={84} className="flex-none" />
+          <Image
+            src={image.url}
+            layout="fixed"
+            width={84}
+            aspectRatio="1:1"
+            fit="fill"
+            className="flex-none"
+            alt={plantName}
+          />
           <div className="pl-2 flex-auto">
             <Typography variant="h6" className="break-words">
               {plantName}
@@ -139,9 +113,15 @@ export function PlantEntryVertical({
 }: Plant) {
   return (
     <div className="opacity-95 hover:opacity-100">
-      <Link href={`/entry/${slug}`} legacyBehavior>
+      <Link legacyBehavior href={`/entry/${slug}`}>
         <a title={`Go to ${plantName}`}>
-          <img src={image.url} width={624} />
+          <Image
+            src={image.url}
+            width={624}
+            layout="intrinsic"
+            aspectRatio="9:12"
+            alt={plantName}
+          />
           <Typography variant="h2" className="break-words pt-4 px-4">
             {plantName}
           </Typography>
@@ -153,7 +133,7 @@ export function PlantEntryVertical({
           color="textSecondary"
           className="py-6"
         />
-        <Link href={`/entry/${slug}`} passHref legacyBehavior>
+        <Link legacyBehavior href={`/entry/${slug}`} passHref>
           <Button>Read more</Button>
         </Link>
       </div>
