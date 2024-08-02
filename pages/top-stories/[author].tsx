@@ -12,6 +12,8 @@ import { getAuthorList, getPlantListByAuthor, QueryStatus } from '@api'
 import { IGetPlantListByAuthorQueryVariables } from '@api/generated/graphql'
 import { useRouter } from 'next/router'
 
+// import ErrorPage from '../_error'
+
 type TopStoriesPageProps = {
   authors: Author[]
   currentAuthor: Author['handle']

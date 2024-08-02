@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPlant, getPlantList, getCategoryList } from "@api";
 
 import { Layout } from "@components/Layout";
@@ -7,7 +8,6 @@ import { Grid } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import { AuthorCard } from "@components/AuthorCard";
 import { GetStaticProps, InferGetServerSidePropsType } from "next";
-import Link from "next/link";
 
 type PlantEntryProps = {
     plant: Plant
@@ -34,7 +34,7 @@ export const getStaticPaths = async() => {
     }
 }
 
-export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params}) => {
+export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params, preview}) => {
     const slug = params?.slug as string
     if (typeof slug !== 'string'){
         return {
@@ -42,7 +42,7 @@ export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params}) =
         }
     }
     try{
-        const plant = await getPlant(slug)
+        const plant = await getPlant(slug, preview)
         const otherEntries = await getCategoryList({limit: 4})
         return {
             props: {
