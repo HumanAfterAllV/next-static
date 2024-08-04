@@ -18,9 +18,14 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "cookie": "^0.6.0",
+    "graphql-request": "^3.7.0",
+    "i18next": "^23.12.2",
     "next": "^14.2.5",
+    "next-i18next": "^15.3.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.0.0"
   },
   "devDependencies": {
     "@apollo/client": "^3.3.19",
@@ -33,6 +38,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@next/bundle-analyzer": "^10.2.3",
+    "@types/cookie": "^0.6.0",
     "@types/lodash": "^4.14.170",
     "@types/react": "^17.0.6",
     "autoprefixer": "^10.2.5",

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 import { Layout } from '@components/Layout'
 import { getPlantList } from '@api'
@@ -10,11 +12,12 @@ type HomeProps = {
   plants: Plant[]
 }
 
-export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-  const plants = await getPlantList({ limit: 10 })
+export const getStaticProps: GetStaticProps<HomeProps> = async ({locale}) => {
+  const plants = await getPlantList({ limit: 10 , locale})
+  const i18n = await serverSideTranslations(locale!)
 
   return {
-    props: { plants },
+    props: { plants , ...i18n},
     revalidate: 5 * 60, // once every five minutes
   }
 }
@@ -22,6 +25,17 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 export default function Home({
   plants,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  if (!hydrated) {
+    return null; // or a loading spinner
+  }
+
   return (
     <Layout>
       <Hero {...plants[0]} className="mb-20" />

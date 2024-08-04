@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { flatMap } from "lodash";
 import { getPlant, getPlantList, getCategoryList } from "@api";
 
 import { Layout } from "@components/Layout";
@@ -7,7 +9,7 @@ import { RichText } from "@components/RichText";
 import { Grid } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import { AuthorCard } from "@components/AuthorCard";
-import { GetStaticProps, InferGetServerSidePropsType } from "next";
+import { GetStaticPaths, GetStaticProps, InferGetServerSidePropsType } from "next";
 
 type PlantEntryProps = {
     plant: Plant
@@ -17,24 +19,32 @@ type PlantEntryProps = {
 type PathType = {
     params: {
         slug: string
-    }
+    },
+    locale: string
 }
 
-export const getStaticPaths = async() => {
-    const entries = await getPlantList({limit: 10});
-    const paths: PathType[] = entries.map(plant => ({
-        params: {
-            slug: plant.slug
-        }
-    }));
+export const getStaticPaths : GetStaticPaths = async({locales}) => {
 
-    return {
+    if (!locales){
+        throw new Error('Locales is not defined')
+    }
+
+    const entries = await getPlantList({limit: 10});
+    const paths: PathType[] = flatMap(
+        entries.map(({ slug }) => ({
+            params:{
+                slug
+            }
+        })),
+        (path) => locales.map((loc => ({ locale: loc, ...path })))
+    )
+    return{
         paths,
         fallback: 'blocking'
     }
 }
 
-export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params, preview}) => {
+export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params, preview, locale}) => {
     const slug = params?.slug as string
     if (typeof slug !== 'string'){
         return {
@@ -42,7 +52,7 @@ export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params, pr
         }
     }
     try{
-        const plant = await getPlant(slug, preview)
+        const plant = await getPlant(slug, preview, locale)
         const otherEntries = await getCategoryList({limit: 4})
         return {
             props: {
@@ -61,6 +71,17 @@ export const getStaticProps: GetStaticProps<PlantEntryProps> = async({params, pr
 
 
 export default function PlantEntryPage({ plant, categories }: InferGetServerSidePropsType<typeof getStaticProps>){
+
+    const [hydrated, setHydrated] = useState(false)
+
+    useEffect(() => {
+        setHydrated(true);
+      }, []);
+    
+      if (!hydrated) {
+        return null; // or a loading spinner
+      }
+
     
     if(plant === null){
         <Layout>
