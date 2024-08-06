@@ -53,6 +53,7 @@ export default function Search() {
   if (data?.pages != null) {
     results = flatMap(data.pages)
   }
+
   return (
     <Layout>
       <main className="pt-16 text-center">
