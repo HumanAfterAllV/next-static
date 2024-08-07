@@ -7,9 +7,16 @@ const options: NextAuthOptions = {
     theme: {
         colorScheme: 'dark',
     },
-    debug: true,
-    session: {},
-    jwt: {},
+    debug: 'development' === process.env.NODE_ENV,
+    session: {
+        // jwt: true,
+        maxAge: 30 * 24 * 60 * 60,
+    },
+    jwt: {
+        secret: process.env.AUTH_JWT_SECRET,
+        // encryption: true,
+        // encryptionKey: process.env.AUTH_JWT_ENCRYPTION_KEY,
+    },
     providers: [
         Credentials({
             name: 'Platzi',
