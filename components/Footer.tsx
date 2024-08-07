@@ -5,7 +5,7 @@ import { Typography } from '@ui/Typography'
 import { useTranslation } from 'react-i18next'
 
 export const Footer = ({ className }: { className?: string }) => {
-  const { t } = useTranslation(['common'])
+  const { t } = useTranslation('common')
   return (
     <footer
       className={clsx(
